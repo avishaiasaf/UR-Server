@@ -1,9 +1,11 @@
 const express = require('express');
 const path = require('path');
+const multer = require('multer');
 
 const app = new express();
 const port = 3000;
 const router = require('./routes/router.js');
+
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
