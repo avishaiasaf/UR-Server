@@ -1,11 +1,11 @@
 <%- include ('./partials/head.ejs') %>
-    <form action="/analyze_report/" method="post" enctype="multipart/form-data">
+    <form action="/analyze_report" method="POST" enctype="multipart/form-data">
         <div>
             <label for="ini">ini file: </label>
-            <input type="file" name="ini" id="ini">
+            <input type="file" name="iniFile" />
             <br /><br />
             <label>bkmvdata file: </label>
-            <input type="file" name="bkmv" id="bkmv">
+            <input type="file" name="bkmvFile" />
         </div>
         <div>
             <input type="submit" value="OK" name="btn_upload">

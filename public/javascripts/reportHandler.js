@@ -194,7 +194,7 @@ var reportHandler = {
     }
 };
 
-(function testReport(){
+/*(function testReport(){
 
     var ini_input='';
     var bkmvdata_input = '';
@@ -227,15 +227,17 @@ var reportHandler = {
     function logData(){
         //console.log(reportHandler.ini_parsed);
         //console.log(reportHandler.bkmvdata_parsed['d110']);
-        console.log(reportHandler.tran_dict['d110']['23033'].reduce(amountReducer));/*(a, b)=>{
+        console.log(reportHandler.tran_dict['d110']['23033'].reduce(amountReducer));(a, b)=>{
             //console.log(a);
             if(typeof(a) === 'object')    return parseInt(a['amount'] + b['amount']);
             else                          return parseInt(a + b['amount']);
             
-        }));*/
+        }));
         //console.log(reportHandler.tran_dict['d110']['23033']);
     }
     loadData(runReport)
-})();
+})();*/
+
+module.exports = reportHandler;
 
 
