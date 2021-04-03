@@ -12,7 +12,10 @@ var reportHandler = {
         ini_parsed: null,
         bkmvdata_parsed: null,
         tran_dict: {a100:{} ,b100:{}, b110:{}, c100:{}, d110:{}, d120:{}, m100:{}}, 
-        tran_ids: null,  
+        tran_ids: null,
+        summary_c100: null,  
+        summary_d110: null,
+        summary_d120: null,
     },
     rejects:{
         headerError: null,
@@ -60,6 +63,9 @@ var reportHandler = {
         var records = {a100:[] ,b100:[], b110:[], c100:[], d110:[], d120:[], m100:[]};
         var dict = {a100:{} ,b100:{}, b110:{}, c100:{}, d110:{}, d120:{}, m100:{}};
         var tranIdSet = new Set();
+        var summary_c100 = {100: 0, 305: 0, 320:0, 330:0, 400:0, 410:0, 500:0, 700:0, 710:0, 810:0, 820:0, 830:0, 840:0, 900:0, 910:0};
+        var summary_d110 = {100: 0, 305: 0, 320:0, 330:0, 400:0, 410:0, 500:0, 700:0, 710:0, 810:0, 820:0, 830:0, 840:0, 900:0, 910:0};
+        var summary_d120 = {100: 0, 305: 0, 320:0, 330:0, 400:0, 410:0, 500:0, 700:0, 710:0, 810:0, 820:0, 830:0, 840:0, 900:0, 910:0};
 
         for(let i=0;i<input.length;i++){
             let type=input[i].substring(0,4);
@@ -81,16 +87,19 @@ var reportHandler = {
                     else    dict['c100'][parsedLine['id']].push(parsedLine);
                     //accessories.recordTitles['A000']
                     tranIdSet.add(parsedLine['id']);
+                    summary_c100[parsedLine['doctype']]+=parseInt(parsedLine['totalafterdiscount']);
                     break;
                 case 'D110':
                     records['d110'].push(parsedLine);
                     if(!dict['d110'][parsedLine['id']])     dict['d110'][parsedLine['id']] = Array.from(parsedLine);
                     else    dict['d110'][parsedLine['id']].push(parsedLine);
+                    summary_d110[parsedLine['doctype']]+=parseInt(parsedLine['amount']);
                     break;
                 case 'D120':
                     records['d120'].push(parsedLine);
                     if(!dict['d120'][parsedLine['id']])     dict['d120'][parsedLine['id']] = Array.from(parsedLine);
                     else    dict['d120'][parsedLine['id']].push(parsedLine);
+                    summary_d120[parsedLine['doctype']]+=parseInt(parsedLine['amount']);
                     break;
                 case 'M100':
                     records['m100'].push(parsedLine);
@@ -101,6 +110,9 @@ var reportHandler = {
         this.bkmvdata_parsed = records;
         this.tran_dict = dict;
         this.tran_ids = Array.from(tranIdSet);
+        this.summary_c100 = summary_c100;
+        this.summary_d110 = summary_d110;
+        this.summary_d120 = summary_d120;
     },
     processLine(line){
         if(!line) return;

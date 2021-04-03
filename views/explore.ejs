@@ -1,10 +1,174 @@
 <%- include ('./partials/head.ejs') %>
-<label for="tran_ids">Transaction Ids</label>
-<select id="tran_ids">
-    <% for (var i=0;i<=options.length-1;i++) {%>
-        <option><%= options[i] %></option>
-    <% } %>
-    <%= options[i] %>
-</select>
+<div class="top_nav">
+    <a href="/" class="active"><b>Home</b></a>
+    <a href="/about"><b>About</b></a>
+</div>
+<br /><br />
+
+<div class="tab">
+    <button class="tablinks" onclick="openTab(event, 'Summary')" id="default">Summary</button>
+    <button class="tablinks" onclick="openTab(event, 'Transactions')">Transactions</button>
+    <button class="tablinks" onclick="openTab(event, 'Sections')">Sections</button>
+    <button class="tablinks" onclick="openTab(event, 'Errors')">Errors</button>
+</div>
+<div id="Summary" class="tabcontent">
+    <h3>Summary</h3>
+    <table>
+        <thead>
+            <th>Section</th><th>C100</th><th>D110</th><th>D120</th><th>Descripancy</th><th>Des. Rate</th>
+        </thead>
+        <% let sections = [100, 305, 320, 330, 400, 410, 500, 700, 710, 810, 820, 830, 840, 900, 910]%>
+        <% for (var i=0;i<=sections.length-1;i++) {%>   
+            <tr>
+                <% var diff_1 = c100[sections[i]]/100-d110[sections[i]]/100 %>
+                <% var diff_2 = c100[sections[i]]/100-d120[sections[i]]/100 %>
+                <td><%= sections[i] %></td><td><%= c100[sections[i]]/100 %></td>
+                <td><%= d110[sections[i]]/100 %></td><td><%= d120[sections[i]]/100 %></td>
+                <td><% if(sections[i]=='400' || sections[i]=='410'){ %>
+                    <%= diff_2 %>
+                <% } else { %>
+                    <%= diff_1 %>
+                <% } %></td>
+                <td><% if(sections[i]=='400' || sections[i]=='410'){ %>
+                    <%= diff_2/(d120[sections[i]]/100) %>
+                <% } else { %>
+                    <%= diff_1/(d110[sections[i]]/100) %>
+                <% } %></td>
+            </tr>
+        <% } %>
+    </table>
+    
+</div>
+<div id="Transactions" class="tabcontent">
+    <h3>Transactions</h3>
+    <p>Report Transactions</p>
+    <label for="tran_ids">Transaction Ids</label>
+    <select id="tran_ids">
+        <% for (var i=0;i<=options.length-1;i++) {%>
+            <option><%= options[i] %></option>
+        <% } %>
+        <%= options[i] %>
+    </select>
+</div>
+<div id="Sections" class="tabcontent">
+    <div class="subtab">
+        <button class="subtab_links" onclick="openSubtab(event, 'B100')" id="default">B100</button>
+        <button class="subtab_links" onclick="openSubtab(event, 'B110')">B110</button>
+        <button class="subtab_links" onclick="openSubtab(event, 'C100')">C100</button>
+        <button class="subtab_links" onclick="openSubtab(event, 'D110')">D110</button>
+        <button class="subtab_links" onclick="openSubtab(event, 'D120')">D120</button>
+        <button class="subtab_links" onclick="openSubtab(event, 'M100')">M100</button>
+    </div>
+    <div id="B100" class="subtabcontent">
+        <h3>B100</h3>
+        <p>Report B100</p>
+    </div>
+    <div id="B110" class="subtabcontent">
+        <h3>B110</h3>
+        <p>Report B110</p>
+    </div>
+    <div id="C100" class="subtabcontent">
+        <h3>C100</h3>
+        <p>Report C100</p>
+    </div>
+    <div id="D110" class="subtabcontent">
+        <h3>D110</h3>
+        <p>Report D110</p>
+    </div>
+    <div id="D120" class="subtabcontent">
+        <h3>D120</h3>
+        <p>Report D120</p>
+    </div>
+    <div id="M100" class="subtabcontent">
+        <h3>M100</h3>
+        <p>Report M100</p>
+    </div>
+</div>
+<div id="Errors" class="tabcontent">
+    <div class="subtab_1">
+        <button class="subtab_links" onclick="openSubtab(event, 'Eheaders')" id="default">Headers</button>
+        <button class="subtab_links" onclick="openSubtab(event, 'Esummary')">Summary</button>
+        <button class="subtab_links" onclick="openSubtab(event, 'Eaccounts')">Accounts</button>
+        <button class="subtab_links" onclick="openSubtab(event, 'Eline')">Line</button>
+        <button class="subtab_links" onclick="openSubtab(event, 'Evat')">VAT</button>
+        <button class="subtab_links" onclick="openSubtab(event, 'Enegheader')">Negative Header</button>
+    </div>
+    <div id="Eheaders" class="subtabcontent">
+        <h3>Headers</h3>
+        <p>Report Header Errors</p>
+    </div>
+    <div id="Esummary" class="subtabcontent">
+        <h3>Summary Errors</h3>
+        <p>Report Summary Errors</p>
+    </div>
+    <div id="Eaccounts" class="subtabcontent">
+        <h3>Accounts Errors</h3>
+        <p>Report Accounts Errors</p>
+    </div>
+    <div id="Eline" class="subtabcontent">
+        <h3>Line Errors</h3>
+        <p>Report Line Descripancy Errors</p>
+    </div>
+    <div id="Evat" class="subtabcontent">
+        <h3>Header VAT Errors</h3>
+        <p>Report Header VAT Errors</p>
+    </div>
+    <div id="Enegheader" class="subtabcontent">
+        <h3>Negative Header</h3>
+        <p>Report Negative Header Errors</p>
+    </div>
+</div>
+    <script>
+        document.getElementById('default').click();
+        function openTab(evt, tabName) {
+            // Declare all variables
+            var i, tabcontent, tablinks;
+
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        function openSubtab(evt, subtabName) {
+            // Declare all variables
+            var i, tabcontent, tablinks;
+
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("subtabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("subtab_links");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(subtabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+        var c100 = JSON.parse('<%-JSON.stringify(c100)%>');
+        var d110 = JSON.parse('<%-JSON.stringify(d110)%>');
+        function getSummary(type){
+            return c100[type];
+        }
+        console.log(d110);
+        console.log(getSummary[410]);
+    </script>
+
 </body>
 </html>

@@ -1,4 +1,9 @@
 <%- include ('./partials/head.ejs') %>
+<div class="top_nav">
+    <a href="/" class="active"><b>Home</b></a>
+    <a href="/about"><b>About</b></a>
+</div>
+<br /><br />
     <form action="/analyze_report" method="POST" enctype="multipart/form-data">
         <div>
             <label for="ini">ini file: </label>
@@ -8,7 +13,7 @@
             <input type="file" name="bkmvFile" accept=".txt" /><br /><br />
         </div>
         <div>
-            <input type="submit" value="OK" name="btn_upload">
+            <input type="submit" value="Submit" name="btn_upload">
         </div>
     </form>
 </body>
