@@ -27,8 +27,10 @@ app.post('/analyze_report', cpUpload, function (req, res, next) {
   reportHandler.ini = ini;
   reportHandler.bkmvdata = bkmv;
   reportHandler.init();
+  var record = reportHandler.tran_ids
   setTimeout(()=>{
-    res.send(reportHandler.bkmvdata_parsed); //Buffer.from(iniFile[0].buffer).toString("utf-8");
+    //res.send(record); //Buffer.from(iniFile[0].buffer).toString("utf-8");
+    res.render('explore', {title: 'Explore', caption: 'Explore Company Report', options: record})
   }, 1500);
   
 });

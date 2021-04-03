@@ -11,7 +11,8 @@ var reportHandler = {
     outputs:{
         ini_parsed: null,
         bkmvdata_parsed: null,
-        tran_dict: {a100:{} ,b100:{}, b110:{}, c100:{}, d110:{}, d120:{}, m100:{}},   
+        tran_dict: {a100:{} ,b100:{}, b110:{}, c100:{}, d110:{}, d120:{}, m100:{}}, 
+        tran_ids: null,  
     },
     rejects:{
         headerError: null,
@@ -58,6 +59,7 @@ var reportHandler = {
         var input=input_data.split('\n');  
         var records = {a100:[] ,b100:[], b110:[], c100:[], d110:[], d120:[], m100:[]};
         var dict = {a100:{} ,b100:{}, b110:{}, c100:{}, d110:{}, d120:{}, m100:{}};
+        var tranIdSet = new Set();
 
         for(let i=0;i<input.length;i++){
             let type=input[i].substring(0,4);
@@ -78,6 +80,7 @@ var reportHandler = {
                     if(!dict['c100'][parsedLine['id']])     dict['c100'][parsedLine['id']] = Array.from(parsedLine);
                     else    dict['c100'][parsedLine['id']].push(parsedLine);
                     //accessories.recordTitles['A000']
+                    tranIdSet.add(parsedLine['id']);
                     break;
                 case 'D110':
                     records['d110'].push(parsedLine);
@@ -97,6 +100,7 @@ var reportHandler = {
 
         this.bkmvdata_parsed = records;
         this.tran_dict = dict;
+        this.tran_ids = Array.from(tranIdSet);
     },
     processLine(line){
         if(!line) return;

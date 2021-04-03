@@ -1,3 +1,10 @@
 <%- include ('./partials/head.ejs') %>
+<label for="tran_ids">Transaction Ids</label>
+<select id="tran_ids">
+    <% for (var i=0;i<=options.length-1;i++) {%>
+        <option><%= options[i] %></option>
+    <% } %>
+    <%= options[i] %>
+</select>
 </body>
 </html>
