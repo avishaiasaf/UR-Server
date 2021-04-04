@@ -3,6 +3,7 @@ const router = express.Router();
 const path = require('path');
 const multer = require('multer');
 const reportHandler = require('../public/javascripts/reportHandler');
+const accessories = require("../public/javascripts/accessories.js");
 
 var storage = multer.memoryStorage()
 var upload = multer({ storage: storage })
@@ -28,11 +29,14 @@ router.post('/analyze_report', cpUpload, function (req, res, next) {
   var summary_c100 = reportHandler.summary_c100;
   var summary_d110 = reportHandler.summary_d110;
   var summary_d120 = reportHandler.summary_d120;
+  var parsed_sections = reportHandler.bkmvdata_parsed;
+  var fields = accessories.fields;
   setTimeout(()=>{
     //res.send(record); //Buffer.from(iniFile[0].buffer).toString("utf-8");
     res.render('explore', {title: 'Explore', caption: 'Explore Company Report', 
-            options: record, c100: summary_c100, d110: summary_d110, d120: summary_d120});
-    console.log(summary_d110);
+            options: record, c100: summary_c100, d110: summary_d110, d120: summary_d120,
+            parsed_sections: parsed_sections, fields: fields});
+    console.log(fields);
   }, 1500);
   
 });
