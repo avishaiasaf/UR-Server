@@ -16,6 +16,7 @@ var reportHandler = {
         summary_c100: null,  
         summary_d110: null,
         summary_d120: null,
+        summary: null,
     },
     rejects:{
         headerError: null,
@@ -85,7 +86,6 @@ var reportHandler = {
                     records['c100'].push(parsedLine);
                     if(!dict['c100'][parsedLine['id']])     dict['c100'][parsedLine['id']] = Array.from(parsedLine);
                     else    dict['c100'][parsedLine['id']].push(parsedLine);
-                    //accessories.recordTitles['A000']
                     tranIdSet.add(parsedLine['id']);
                     summary_c100[parsedLine['doctype']]+=parseInt(parsedLine['totalafterdiscount']);
                     break;
@@ -158,20 +158,31 @@ var reportHandler = {
     validateHeader(){
         //validate that each C100 header has D110 or D120 line.
 
-        var header = new Set();
+        //var header = new Set();
+        var header = new Array();
         let len = Math.max(this.bkmvdata_parsed['c100'].length, this.bkmvdata_parsed['d110'].length, this.bkmvdata_parsed['d120'].length);
 
         for(let i=0;i<len;i++){
             //Validate C100 headers has D110 or D120 lines
-            if(i<this.bkmvdata_parsed['c100'].length)   if(!this.tran_dict['d110'][this.bkmvdata_parsed['c100'][i]['id']] && !this.tran_dict['d120'][this.bkmvdata_parsed['c100'][i]['id']])  header.add(this.bkmvdata_parsed['c100'][i]['id']);
+            if(i<this.bkmvdata_parsed['c100'].length)   
+                if(!this.tran_dict['d110'][this.bkmvdata_parsed['c100'][i]['id']] && !this.tran_dict['d120'][this.bkmvdata_parsed['c100'][i]['id']])  
+                    //header.add(this.bkmvdata_parsed['c100'][i]['id']);
+                    header.push([this.bkmvdata_parsed['c100'][i]['id'], this.bkmvdata_parsed['c100'][i]['fileno'], 'missing lines']);
             //Validate D110 lines has C100 headers
-            if(i<this.bkmvdata_parsed['d110'].length)   if(!this.tran_dict['c100'][this.bkmvdata_parsed['d110'][i]['id']])  header.add(this.bkmvdata_parsed['d110'][i]['id']);
+            if(i<this.bkmvdata_parsed['d110'].length)   
+                if(!this.tran_dict['c100'][this.bkmvdata_parsed['d110'][i]['id']])  
+                    //header.add(this.bkmvdata_parsed['d110'][i]['id']);
+                    header.push([this.bkmvdata_parsed['d110'][i]['id'], this.bkmvdata_parsed['d110'][i]['fileno'], 'missing header']);
             //Validate D120 lines has C100 headers
-            if(i<this.bkmvdata_parsed['d120'].length)   if(!this.tran_dict['c100'][this.bkmvdata_parsed['d120'][i]['id']])  header.add(this.bkmvdata_parsed['d120'][i]['id']);
+            if(i<this.bkmvdata_parsed['d120'].length)   
+                if(!this.tran_dict['c100'][this.bkmvdata_parsed['d120'][i]['id']])  
+                    //header.add(this.bkmvdata_parsed['d120'][i]['id']);
+                    header.push([this.bkmvdata_parsed['d120'][i]['id'], this.bkmvdata_parsed['d120'][i]['fileno'], 'missing header']);
         }
 
+        //this.headerError = Array.from(header);
         this.headerError = header;
-        console.log(this.headerError)
+        //console.log(this.headerError)
         //console.log('search', this.tran_dict['c100']['23029'])
     },
     validateSummary(){

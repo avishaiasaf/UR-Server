@@ -11,14 +11,7 @@ var upload = multer({ storage: storage })
 var cpUpload = upload.fields([{ name: 'iniFile', maxCount: 1 }, { name: 'bkmvFile', maxCount: 1 }])
 
 router.post('/analyze_report', cpUpload, function (req, res, next) {
-  // req.files is an object (String -> Array) where fieldname is the key, and the value is array of files
-  //
-  // e.g.
-  //  req.files['avatar'][0] -> File
-  //  req.files['gallery'] -> Array
-  //
-  // req.body will contain the text fields, if there were any
-  //var ini = Buffer.from(req.files['iniFile'][0].buffer).toString("utf-8");
+
   var ini = Buffer.from(req.files['iniFile'][0].buffer).toString("utf-8");
   var bkmv = Buffer.from(req.files['bkmvFile'][0].buffer).toString("utf-8");
 
@@ -30,13 +23,14 @@ router.post('/analyze_report', cpUpload, function (req, res, next) {
   var summary_d110 = reportHandler.summary_d110;
   var summary_d120 = reportHandler.summary_d120;
   var parsed_sections = reportHandler.bkmvdata_parsed;
+  var headerError = reportHandler.headerError;
   var fields = accessories.fields;
   setTimeout(()=>{
     //res.send(record); //Buffer.from(iniFile[0].buffer).toString("utf-8");
     res.render('explore', {title: 'Explore', caption: 'Explore Company Report', 
             options: record, c100: summary_c100, d110: summary_d110, d120: summary_d120,
-            parsed_sections: parsed_sections, fields: fields});
-    console.log(fields);
+            parsed_sections: parsed_sections, fields: fields, headerError: headerError});
+    //console.log(fields);
   }, 1500);
   
 });

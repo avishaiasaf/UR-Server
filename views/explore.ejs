@@ -52,143 +52,41 @@
 </div>
 <div id="Sections" class="tabcontent">
     <div class="subtab">
-        <button class="subtab_links" onclick="openSubtab(event, 'B100')" id="default">B100</button>
+        <button class="subtab_links" onclick="openSubtab(event, 'B100')" id="default_1">B100</button>
         <button class="subtab_links" onclick="openSubtab(event, 'B110')">B110</button>
         <button class="subtab_links" onclick="openSubtab(event, 'C100')">C100</button>
         <button class="subtab_links" onclick="openSubtab(event, 'D110')">D110</button>
         <button class="subtab_links" onclick="openSubtab(event, 'D120')">D120</button>
         <button class="subtab_links" onclick="openSubtab(event, 'M100')">M100</button>
     </div>
-    <div id="B100" class="subtabcontent">
-        <h3>B100 Section</h3>
-        <% var len = JSON.stringify(parsed_sections['b100'].length)%>
-        <table>
+    <% var secName=["B100", "B110", "C100", "D110", "D120","M100"] %>
+    <% for(var a=0;a<=secName.length-1;a++){ %>
+    <div id="<%= secName[a] %>" class="subtabcontent">
+        <h3><%= secName[a] %> Section</h3>
+        <% var len = JSON.stringify(parsed_sections[secName[a].toLowerCase()].length)%>
+        <table class="scrollit">
             <thead>
-                <% var line_len = JSON.stringify(fields['B100'].length)%>
+                <% var line_len = JSON.stringify(fields[secName[a]].length)%>
                 <% for (var j=0;j<=line_len-1;j++) {%>  
-                    <% var field_name = JSON.stringify(fields['B100'][j])%>
+                    <% var field_name = JSON.stringify(fields[secName[a]][j])%>
                     <th><%= field_name %></th>
                 <% } %>
             </thead>
             <% for (var i=0;i<=len-1;i++) {%>   
             <tr>
                 <% for (var j=0;j<=line_len-1;j++) {%>  
-                    <% var field_value = JSON.stringify(parsed_sections['b100'][i][fields['B100'][j]])%> 
+                    <% var field_value = JSON.stringify(parsed_sections[secName[a].toLowerCase()][i][fields[secName[a]][j]])%> 
                     <td><%= field_value %></td>
                 <% } %>
             </tr>
             <% } %>
         </table>
     </div>
-    <div id="B110" class="subtabcontent">
-        <h3>B110</h3>
-        <% var len = JSON.stringify(parsed_sections['b110'].length)%>
-        <table>
-            <thead>
-                <% var line_len = JSON.stringify(fields['B110'].length)%>
-                <% for (var j=0;j<=line_len-1;j++) {%>  
-                    <% var field_name = JSON.stringify(fields['B110'][j])%>
-                    <th><%= field_name %></th>
-                <% } %>
-            </thead>
-            <% for (var i=0;i<=len-1;i++) {%>   
-            <tr>
-                <% for (var j=0;j<=line_len-1;j++) {%>  
-                    <% var field_value = JSON.stringify(parsed_sections['b110'][i][fields['B110'][j]])%> 
-                    <td><%= field_value %></td>
-                <% } %>
-            </tr>
-            <% } %>
-        </table>
-    </div>
-    <div id="C100" class="subtabcontent">
-        <h3>C100</h3>
-        <% var len = JSON.stringify(parsed_sections['c100'].length)%>
-        <table>
-            <thead>
-                <% var line_len = JSON.stringify(fields['C100'].length)%>
-                <% for (var j=0;j<=line_len-1;j++) {%>  
-                    <% var field_name = JSON.stringify(fields['C100'][j])%>
-                    <th><%= field_name %></th>
-                <% } %>
-            </thead>
-            <% for (var i=0;i<=len-1;i++) {%>   
-            <tr>
-                <% for (var j=0;j<=line_len-1;j++) {%>  
-                    <% var field_value = JSON.stringify(parsed_sections['c100'][i][fields['C100'][j]])%> 
-                    <td><%= field_value %></td>
-                <% } %>
-            </tr>
-            <% } %>
-        </table>
-    </div>
-    <div id="D110" class="subtabcontent">
-        <h3>D110</h3>
-        <% var len = JSON.stringify(parsed_sections['d110'].length)%>
-        <table>
-            <thead>
-                <% var line_len = JSON.stringify(fields['D110'].length)%>
-                <% for (var j=0;j<=line_len-1;j++) {%>  
-                    <% var field_name = JSON.stringify(fields['D110'][j])%>
-                    <th><%= field_name %></th>
-                <% } %>
-            </thead>
-            <% for (var i=0;i<=len-1;i++) {%>   
-            <tr>
-                <% for (var j=0;j<=line_len-1;j++) {%>  
-                    <% var field_value = JSON.stringify(parsed_sections['d110'][i][fields['D110'][j]])%> 
-                    <td><%= field_value %></td>
-                <% } %>
-            </tr>
-            <% } %>
-        </table>
-    </div>
-    <div id="D120" class="subtabcontent">
-        <h3>D120</h3>
-        <% var len = JSON.stringify(parsed_sections['d120'].length)%>
-        <table>
-            <thead>
-                <% var line_len = JSON.stringify(fields['D120'].length)%>
-                <% for (var j=0;j<=line_len-1;j++) {%>  
-                    <% var field_name = JSON.stringify(fields['D120'][j])%>
-                    <th><%= field_name %></th>
-                <% } %>
-            </thead>
-            <% for (var i=0;i<=len-1;i++) {%>   
-            <tr>
-                <% for (var j=0;j<=line_len-1;j++) {%>  
-                    <% var field_value = JSON.stringify(parsed_sections['d120'][i][fields['D120'][j]])%> 
-                    <td><%= field_value %></td>
-                <% } %>
-            </tr>
-            <% } %>
-        </table>
-    </div>
-    <div id="M100" class="subtabcontent">
-        <h3>M100</h3>
-        <% var len = JSON.stringify(parsed_sections['m100'].length)%>
-        <table>
-            <thead>
-                <% var line_len = JSON.stringify(fields['M100'].length)%>
-                <% for (var j=0;j<=line_len-1;j++) {%>  
-                    <% var field_name = JSON.stringify(fields['M100'][j])%>
-                    <th><%= field_name %></th>
-                <% } %>
-            </thead>
-            <% for (var i=0;i<=len-1;i++) {%>   
-            <tr>
-                <% for (var j=0;j<=line_len-1;j++) {%>  
-                    <% var field_value = JSON.stringify(parsed_sections['m100'][i][fields['M100'][j]])%> 
-                    <td><%= field_value %></td>
-                <% } %>
-            </tr>
-            <% } %>
-        </table>
-    </div>
+    <% } %>
 </div>
 <div id="Errors" class="tabcontent">
     <div class="subtab_1">
-        <button class="subtab_links" onclick="openSubtab(event, 'Eheaders')" id="default">Headers</button>
+        <button class="subtab_links" onclick="openSubtab(event, 'Eheaders')" id="default_2">Headers</button>
         <button class="subtab_links" onclick="openSubtab(event, 'Esummary')">Summary</button>
         <button class="subtab_links" onclick="openSubtab(event, 'Eaccounts')">Accounts</button>
         <button class="subtab_links" onclick="openSubtab(event, 'Eline')">Line</button>
@@ -198,6 +96,22 @@
     <div id="Eheaders" class="subtabcontent">
         <h3>Headers</h3>
         <p>Report Header Errors</p>
+        <table>
+            <thead>
+                <th>Transaction Id</th><th>Report Line</th><th>Error</th>
+            </thead>
+        <% var len = JSON.stringify(headerError.length)%>
+        <% for (var i=0;i<=len-1;i++) {%>   
+            <tr> 
+                <% var field_value = JSON.stringify(headerError[i][0])%>
+                <% var field_value_1 = JSON.stringify(headerError[i][1])%> 
+                <% var field_value_2 = JSON.stringify(headerError[i][2])%> 
+                <td><%= field_value %></td>
+                <td><%= field_value_1 %></td>
+                <td><%= field_value_2 %></td>
+            </tr>
+        <% } %>
+    </table>
     </div>
     <div id="Esummary" class="subtabcontent">
         <h3>Summary Errors</h3>
@@ -241,6 +155,8 @@
             // Show the current tab, and add an "active" class to the button that opened the tab
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
+            if(tabName=='Sections')     document.getElementById('default_1').click();
+            if(tabName=='Errors')     document.getElementById('default_2').click();
         }
 
         function openSubtab(evt, subtabName) {
