@@ -1,5 +1,6 @@
 # Unified Report Simulator with reject analyzer and file size tolerance
 
+(https://img.shields.io/github/license/avishaiasaf/Unified-Report-Server?style=plastic)
 In order to analyze unified reports, the IRS withholds a basic [simulator](https://www.misim.gov.il/TmbakmmsmlNew/frmCheckFiles.aspx).
 This simulator is limited by the files size that can be tested and the rejects clarification.
 
