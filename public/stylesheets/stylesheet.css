@@ -122,8 +122,8 @@ input[type="submit"]{
     background-color: #ccc;
   }
 
-  table{
-      background-color: #ddd;
+table{
+    background-color: #ddd;
     width: 100%;
     align-content: center;
     border: 1px solid rgb(36, 3, 73);
@@ -131,19 +131,19 @@ input[type="submit"]{
     text-align: center;
     border-collapse: collapse;
   }
-  th{
+th{
     align-content: center;
     border: 1px solid rgb(36, 3, 73);
     text-align: center;
     border-collapse: collapse;
   }
-  td{
+td{
     align-content: center;
     border: 1px solid rgb(36, 3, 73);
     text-align: center;
     border-collapse: collapse;
   }
-  .scrollit {
+.scrollit {
     display: block;
     overflow: auto;
 }

@@ -21,6 +21,9 @@ var reportHandler = {
     rejects:{
         headerError: null,
         summaryError: null,
+        headerNegError: null,
+        LineError: null,
+        JournalError: null,
     },
     handlers:{
         //records: {a000:[],a100:0 ,b100:0,b110:0,c100:0,d110:0,d120:0,m100:0,},
@@ -148,42 +151,73 @@ var reportHandler = {
         return tmp;
     },
     validateReport(){
-        //Check headers vs. lines
-        this.validateHeader();
 
-        //Check header has same amount as lines
-        //this.validateSummary()
-
-    },
-    validateHeader(){
-        //validate that each C100 header has D110 or D120 line.
-
-        //var header = new Set();
-        var header = new Array();
-        let len = Math.max(this.bkmvdata_parsed['c100'].length, this.bkmvdata_parsed['d110'].length, this.bkmvdata_parsed['d120'].length);
+        var headerError = new Array();
+        var headerNegError = new Array();
+        var LineError = new Array();
+        var JournalError = new Array();
+        var c100Len = this.bkmvdata_parsed['c100'].length;
+        var d110Len = this.bkmvdata_parsed['d110'].length;
+        var d120Len = this.bkmvdata_parsed['d120'].length;
+        var b100Len = this.bkmvdata_parsed['b100'].length;
+        let len = Math.max(c100Len, d110Len, d120Len, b100Len);
 
         for(let i=0;i<len;i++){
-            //Validate C100 headers has D110 or D120 lines
-            if(i<this.bkmvdata_parsed['c100'].length)   
-                if(!this.tran_dict['d110'][this.bkmvdata_parsed['c100'][i]['id']] && !this.tran_dict['d120'][this.bkmvdata_parsed['c100'][i]['id']])  
-                    //header.add(this.bkmvdata_parsed['c100'][i]['id']);
-                    header.push([this.bkmvdata_parsed['c100'][i]['id'], this.bkmvdata_parsed['c100'][i]['fileno'], 'missing lines']);
+            if(i<c100Len){
+                //Validate C100 headers has D110 or D120 lines
+                let currentId = this.bkmvdata_parsed['c100'][i]['id'];
+                let currentRow = this.bkmvdata_parsed['d110'][i]['fileno'];
+                if(this.validateHeader('c100', i))    
+                    headerError.push([currentId, currentRow, 'Error:: Missing Lines']);   
+                //Validate C100 header amount is not negative
+                if(this.validateNegativeHeaders(i))   
+                    headerNegError.push([currentId, currentRow, 'Error:: Negative Amount for Header'])      
+            }
+            if(i<d110Len){
             //Validate D110 lines has C100 headers
-            if(i<this.bkmvdata_parsed['d110'].length)   
-                if(!this.tran_dict['c100'][this.bkmvdata_parsed['d110'][i]['id']])  
-                    //header.add(this.bkmvdata_parsed['d110'][i]['id']);
-                    header.push([this.bkmvdata_parsed['d110'][i]['id'], this.bkmvdata_parsed['d110'][i]['fileno'], 'missing header']);
-            //Validate D120 lines has C100 headers
-            if(i<this.bkmvdata_parsed['d120'].length)   
-                if(!this.tran_dict['c100'][this.bkmvdata_parsed['d120'][i]['id']])  
-                    //header.add(this.bkmvdata_parsed['d120'][i]['id']);
-                    header.push([this.bkmvdata_parsed['d120'][i]['id'], this.bkmvdata_parsed['d120'][i]['fileno'], 'missing header']);
+                let currentId = this.bkmvdata_parsed['d110'][i]['id'];
+                let currentRow = this.bkmvdata_parsed['d110'][i]['fileno'];
+                let lineDis = this.validateLineDicrepancy(i);
+                if(this.validateHeader('d110', i))    
+                    headerError.push([currentId, currentRow, 'Error:: Missing Header']); 
+                if(lineDis)
+                    LineError.push([currentId, currentRow, lineDis])
+            }
+            if(i<d120Len){
+                //Validate D120 lines has C100 headers
+                let currentId = this.bkmvdata_parsed['d120'][i]['id'];
+                let currentRow = this.bkmvdata_parsed['d120'][i]['fileno'];
+                if(this.validateHeader('d120', i))    
+                    headerError.push([currentId, currentRow, 'Error:: Missing Header']);
+
+            } 
+            if(i<b100Len){
+                let currentRef = this.bkmvdata_parsed['b100'][i]['id'];
+                let currentRow = this.bkmvdata_parsed['b100'][i]['fileno'];
+                if(this.validateJournals(i))    
+                    JournalError.push([currentRef, currentRow, 'Error:: Missing Transaction Number']);
+            }
         }
 
         //this.headerError = Array.from(header);
-        this.headerError = header;
+        this.headerError = headerError;
+        this.headerNegError = headerNegError;
+        this.LineError = LineError;
+        this.JournalError = JournalError;
         //console.log(this.headerError)
         //console.log('search', this.tran_dict['c100']['23029'])
+    },
+    validateHeader(record, i){
+        if(record=='c100'){
+            if(!this.tran_dict['d110'][this.bkmvdata_parsed['c100'][i]['id']] && !this.tran_dict['d120'][this.bkmvdata_parsed['c100'][i]['id']]){
+                return true;
+            }
+        }else{
+            if(!this.tran_dict['c100'][this.bkmvdata_parsed[record][i]['id']]){
+                return true;    
+            } 
+        }
+        return false;              
     },
     validateSummary(){
         //Validate that each C100 header's amount equals to it's D110 or D120 lines
@@ -207,17 +241,22 @@ var reportHandler = {
         this.summaryError = summary;
         //console.log(this.summaryError)
     },
-    validateAccounts(){
-
+    validateJournals(i){
+        return parseInt(this.bkmvdata_parsed['b100'][i]['trannumber'])==0;
     },
-    validateLineDicrepancy(){
-
+    validateLineDicrepancy(i){
+        let rate = parseInt(this.bkmvdata_parsed['d110'][i]['rate'])/100;
+        let quantity = parseInt(this.bkmvdata_parsed['d110'][i]['quantity'])/10000;
+        let amount = parseInt(this.bkmvdata_parsed['d110'][i]['amount'])/100;
+        if(rate * quantity != amount)  return `Error:: ${rate} * ${quantity} does not equal to ${amount}`;
+        return false;
     },
     validateVAT(){
 
     },
-    validateNegativeHeaders(){
-
+    validateNegativeHeaders(i){
+        if(parseInt(this.bkmvdata_parsed['c100'][i]['totalafterdiscount'])<0)  return true;
+        return false;
     }
 };
 

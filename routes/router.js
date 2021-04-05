@@ -24,12 +24,17 @@ router.post('/analyze_report', cpUpload, function (req, res, next) {
   var summary_d120 = reportHandler.summary_d120;
   var parsed_sections = reportHandler.bkmvdata_parsed;
   var headerError = reportHandler.headerError;
+  var headerNegError = reportHandler.headerNegError;
+  var LineError = reportHandler.LineError;
+  var JournalError = reportHandler.JournalError;
   var fields = accessories.fields;
+  var ini = reportHandler.ini_parsed;
   setTimeout(()=>{
     //res.send(record); //Buffer.from(iniFile[0].buffer).toString("utf-8");
     res.render('explore', {title: 'Explore', caption: 'Explore Company Report', 
             options: record, c100: summary_c100, d110: summary_d110, d120: summary_d120,
-            parsed_sections: parsed_sections, fields: fields, headerError: headerError});
+            parsed_sections: parsed_sections, fields: fields, headerError: headerError,
+            headerNegError: headerNegError, LineError: LineError, JournalError: JournalError, ini: ini});
     //console.log(fields);
   }, 1500);
   

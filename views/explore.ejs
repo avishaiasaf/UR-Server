@@ -10,6 +10,7 @@
     <button class="tablinks" onclick="openTab(event, 'Transactions')">Transactions</button>
     <button class="tablinks" onclick="openTab(event, 'Sections')">Sections</button>
     <button class="tablinks" onclick="openTab(event, 'Errors')">Errors</button>
+    <button class="tablinks" onclick="openTab(event, 'Ini')">INI</button>
 </div>
 <div id="Summary" class="tabcontent">
     <h3>Summary</h3>
@@ -42,13 +43,22 @@
 <div id="Transactions" class="tabcontent">
     <h3>Transactions</h3>
     <p>Report Transactions</p>
+    <table style="width: auto; margin-left: auto; margin-right: auto;">
+        <tr>
+            <td><input type="button" value="<"/></td>
+            <td>
+                <select id="tran_ids">
+                    <% for (var i=0;i<=options.length-1;i++) {%>
+                        <option><%= options[i] %></option>
+                    <% } %>
+                    <%= options[i] %>
+                </select>
+            </td>
+            <td><input type="button" value=">"/></td>
+        </tr>
+    </table>
     <label for="tran_ids">Transaction Ids</label>
-    <select id="tran_ids">
-        <% for (var i=0;i<=options.length-1;i++) {%>
-            <option><%= options[i] %></option>
-        <% } %>
-        <%= options[i] %>
-    </select>
+    
 </div>
 <div id="Sections" class="tabcontent">
     <div class="subtab">
@@ -88,7 +98,7 @@
     <div class="subtab_1">
         <button class="subtab_links" onclick="openSubtab(event, 'Eheaders')" id="default_2">Headers</button>
         <button class="subtab_links" onclick="openSubtab(event, 'Esummary')">Summary</button>
-        <button class="subtab_links" onclick="openSubtab(event, 'Eaccounts')">Accounts</button>
+        <button class="subtab_links" onclick="openSubtab(event, 'Ejournals')">Journals</button>
         <button class="subtab_links" onclick="openSubtab(event, 'Eline')">Line</button>
         <button class="subtab_links" onclick="openSubtab(event, 'Evat')">VAT</button>
         <button class="subtab_links" onclick="openSubtab(event, 'Enegheader')">Negative Header</button>
@@ -98,16 +108,16 @@
         <p>Report Header Errors</p>
         <table>
             <thead>
-                <th>Transaction Id</th><th>Report Line</th><th>Error</th>
+                <th>Report Line</th><th>Transaction Id</th><th>Error</th>
             </thead>
         <% var len = JSON.stringify(headerError.length)%>
         <% for (var i=0;i<=len-1;i++) {%>   
             <tr> 
                 <% var field_value = JSON.stringify(headerError[i][0])%>
                 <% var field_value_1 = JSON.stringify(headerError[i][1])%> 
-                <% var field_value_2 = JSON.stringify(headerError[i][2])%> 
+                <% var field_value_2 = JSON.stringify(headerError[i][2])%>
+                <td><%= field_value_1 %></td> 
                 <td><%= field_value %></td>
-                <td><%= field_value_1 %></td>
                 <td><%= field_value_2 %></td>
             </tr>
         <% } %>
@@ -117,13 +127,44 @@
         <h3>Summary Errors</h3>
         <p>Report Summary Errors</p>
     </div>
-    <div id="Eaccounts" class="subtabcontent">
-        <h3>Accounts Errors</h3>
-        <p>Report Accounts Errors</p>
+    <div id="Ejournals" class="subtabcontent">
+        <h3>Journals Errors</h3>
+        <table>
+            <thead>
+                <th>Report Line</th><th>Transaction Ref</th><th>Error</th>
+            </thead>
+        <% var len = JSON.stringify(JournalError.length)%>
+        <% for (var i=0;i<=len-1;i++) {%>   
+            <tr> 
+                <% var field_value = JSON.stringify(JournalError[i][0])%>
+                <% var field_value_1 = JSON.stringify(JournalError[i][1])%> 
+                <% var field_value_2 = JSON.stringify(JournalError[i][2])%>
+                <td><%= field_value_1 %></td> 
+                <td><%= field_value %></td>
+                <td><%= field_value_2 %></td>
+            </tr>
+        <% } %>
+        </table>
     </div>
     <div id="Eline" class="subtabcontent">
         <h3>Line Errors</h3>
         <p>Report Line Descripancy Errors</p>
+        <table>
+            <thead>
+                <th>Report Line</th><th>Transaction Id</th><th>Error</th>
+            </thead>
+        <% var len = JSON.stringify(LineError.length)%>
+        <% for (var i=0;i<=len-1;i++) {%>   
+            <tr> 
+                <% var field_value = JSON.stringify(LineError[i][0])%>
+                <% var field_value_1 = JSON.stringify(LineError[i][1])%> 
+                <% var field_value_2 = JSON.stringify(LineError[i][2])%>
+                <td><%= field_value_1 %></td> 
+                <td><%= field_value %></td>
+                <td><%= field_value_2 %></td>
+            </tr>
+        <% } %>
+        </table>
     </div>
     <div id="Evat" class="subtabcontent">
         <h3>Header VAT Errors</h3>
@@ -132,7 +173,53 @@
     <div id="Enegheader" class="subtabcontent">
         <h3>Negative Header</h3>
         <p>Report Negative Header Errors</p>
+        <table>
+            <thead>
+                <th>Report Line</th><th>Transaction Id</th><th>Error</th>
+            </thead>
+        <% var len = JSON.stringify(headerNegError.length)%>
+        <% for (var i=0;i<=len-1;i++) {%>   
+            <tr> 
+                <% var field_value = JSON.stringify(headerNegError[i][0])%>
+                <% var field_value_1 = JSON.stringify(headerNegError[i][1])%> 
+                <% var field_value_2 = JSON.stringify(headerNegError[i][2])%>
+                <td><%= field_value_1 %></td> 
+                <td><%= field_value %></td>
+                <td><%= field_value_2 %></td>
+            </tr>
+        <% } %>
+        </table>
     </div>
+</div>
+<div id="Ini" class="tabcontent">
+    <h3>INI File</h3>
+    <% var a000 = JSON.stringify(ini['a000'])%>
+    <table style="width: auto;">
+        <tr>
+            <td>
+                <table style="width: auto;">
+                    <% for (var i=0;i<=fields['A000'].length-1;i++) {%>   
+                        <tr> 
+                            <td><b><%= fields['A000'][i] %></b></td>
+                            <% var field_value = JSON.stringify(ini['a000'][fields['A000'][i]])%>
+                            <td><%= field_value %></td>
+                        </tr>
+                    <% } %>
+                </table>
+            </td>
+            <td>
+                <table style="width: auto;">
+                    <% for(var i=0;i<=secName.length-1;i++){ %>
+                    <tr>
+                        <td><%= secName[i] %> Records</td>
+                        <td><%- JSON.stringify(ini[secName[i].toLowerCase()])%></td>
+                    </tr>
+                    <% } %>
+                </table>
+            </td>
+        </tr>
+    </table>
+    
 </div>
     <script>
         document.getElementById('default').click();
@@ -179,7 +266,11 @@
             document.getElementById(subtabName).style.display = "block";
             evt.currentTarget.className += " active";
         }
+        var selection = document.getElementById('tran_ids');
+        var bkmv_parsed = '<%- JSON.stringify(parsed_sections)%>';
+        selection.addEventListener('change',()=>{
+            console.log(bkmv_parsed['c100']);
+        });
     </script>
-
 </body>
 </html>
