@@ -175,13 +175,12 @@ var reportHandler = {
             }
             if(i<d110Len){
             //Validate D110 lines has C100 headers
-                let currentId = this.bkmvdata_parsed['d110'][i]['id'];
-                let currentRow = this.bkmvdata_parsed['d110'][i]['fileno'];
-                let lineDis = this.validateLineDicrepancy(i);
+                let current = this.bkmvdata_parsed['d110'][i];
+                let lineDis = this.validateLineDicrepancy(current);
                 if(this.validateHeader('d110', i))    
-                    headerError.push([currentId, currentRow, 'Error:: Missing Header']); 
+                    headerError.push([current['id'], current['fileno'], 'Error:: Missing Header']); 
                 if(lineDis)
-                    LineError.push([currentId, currentRow, lineDis])
+                    LineError.push([current['id'], current['fileno'], lineDis])
             }
             if(i<d120Len){
                 //Validate D120 lines has C100 headers
@@ -192,10 +191,9 @@ var reportHandler = {
 
             } 
             if(i<b100Len){
-                let currentRef = this.bkmvdata_parsed['b100'][i]['id'];
-                let currentRow = this.bkmvdata_parsed['b100'][i]['fileno'];
-                if(this.validateJournals(i))    
-                    JournalError.push([currentRef, currentRow, 'Error:: Missing Transaction Number']);
+                let current = this.bkmvdata_parsed['b100'][i];
+                if(this.validateJournals(current))    
+                    JournalError.push([current['id'], current['fileno'], 'Error:: Missing Transaction Number']);
             }
         }
 
@@ -241,13 +239,14 @@ var reportHandler = {
         this.summaryError = summary;
         //console.log(this.summaryError)
     },
-    validateJournals(i){
-        return parseInt(this.bkmvdata_parsed['b100'][i]['trannumber'])==0;
+    validateJournals(line){
+        //return parseInt(this.bkmvdata_parsed['b100'][i]['trannumber'])==0;
+        return parseInt(line['trannumber'])==0;
     },
-    validateLineDicrepancy(i){
-        let rate = parseInt(this.bkmvdata_parsed['d110'][i]['rate'])/100;
-        let quantity = parseInt(this.bkmvdata_parsed['d110'][i]['quantity'])/10000;
-        let amount = parseInt(this.bkmvdata_parsed['d110'][i]['amount'])/100;
+    validateLineDicrepancy(line){
+        let rate = parseInt(line['rate'])/100;
+        let quantity = parseInt(line['quantity'])/10000;
+        let amount = parseInt(line['amount'])/100;
         if(rate * quantity != amount)  return `Error:: ${rate} * ${quantity} does not equal to ${amount}`;
         return false;
     },
@@ -304,6 +303,10 @@ var reportHandler = {
     loadData(runReport)
 })();*/
 
+//Commented for tests
 module.exports = reportHandler;
+//exports.reportHandler = reportHandler;
+//exports.validateJournals = reportHandler.validateJournals;
+
 
 

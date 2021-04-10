@@ -268,8 +268,9 @@
         }
         var selection = document.getElementById('tran_ids');
         var bkmv_parsed = '<%- JSON.stringify(parsed_sections)%>';
+        var c100 = JSON.parse(bkmv_parsed);
         selection.addEventListener('change',()=>{
-            console.log(bkmv_parsed['c100']);
+            console.log(c100['c100']);
         });
     </script>
 </body>

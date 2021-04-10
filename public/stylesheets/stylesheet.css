@@ -26,6 +26,7 @@ input[type="submit"]{
     padding: 10px 10px;
     text-decoration: none;
     font-size: 17px;
+    cursor: pointer;
   }
 
 .top_nav a:hover {
@@ -146,4 +147,7 @@ td{
 .scrollit {
     display: block;
     overflow: auto;
+}
+button{
+    cursor: pointer;
 }
