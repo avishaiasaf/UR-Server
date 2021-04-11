@@ -45,7 +45,7 @@
     <p>Report Transactions</p>
     <table style="width: auto; margin-left: auto; margin-right: auto;">
         <tr>
-            <td><input type="button" value="<"/></td>
+            <td><input type="button" value="<" id="left_button" /></td>
             <td>
                 <select id="tran_ids">
                     <% for (var i=0;i<=options.length-1;i++) {%>
@@ -54,7 +54,7 @@
                     <%= options[i] %>
                 </select>
             </td>
-            <td><input type="button" value=">"/></td>
+            <td><input type="button" value=">" id="right_button" /></td>
         </tr>
     </table>
     <label for="tran_ids">Transaction Ids</label>
@@ -82,14 +82,31 @@
                     <th><%= field_name %></th>
                 <% } %>
             </thead>
+            <% if(secName[a]=='B110') { %>
+                <% var totalDebit = 0, totalCredit = 0 %>
+            <% } %>
             <% for (var i=0;i<=len-1;i++) {%>   
             <tr>
                 <% for (var j=0;j<=line_len-1;j++) {%>  
+                    <% if(secName[a]=='B110') { %> 
+                        <% totalDebit+= parsed_sections[secName[a].toLowerCase()][i]['debit'] %>
+                        <% totalCredit+= parsed_sections[secName[a].toLowerCase()][i]['credit'] %>
+                    <% } %>                  
                     <% var field_value = JSON.stringify(parsed_sections[secName[a].toLowerCase()][i][fields[secName[a]][j]])%> 
                     <td><%= field_value %></td>
                 <% } %>
             </tr>
             <% } %>
+            <% if(secName[a]=='B110') { %>
+                <tr>
+                    <td>
+                        <%= totalDebit %>
+                    </td>
+                    <td>
+                        <%= totalCredit %>
+                    </td>
+                </tr>
+            <% } %>    
         </table>
     </div>
     <% } %>
@@ -126,6 +143,22 @@
     <div id="Esummary" class="subtabcontent">
         <h3>Summary Errors</h3>
         <p>Report Summary Errors</p>
+        <table>
+            <thead>
+                <th>Report Line</th><th>Transaction Id</th><th>Error</th>
+            </thead>
+        <% var len = JSON.stringify(summaryError.length)%>
+        <% for (var i=0;i<=len-1;i++) {%>   
+            <tr> 
+                <% var field_value = JSON.stringify(summaryError[i][0])%>
+                <% var field_value_1 = JSON.stringify(summaryError[i][1])%> 
+                <% var field_value_2 = JSON.stringify(summaryError[i][2])%>
+                <td><%= field_value_1 %></td> 
+                <td><%= field_value %></td>
+                <td><%= field_value_2 %></td>
+            </tr>
+        <% } %>
+    </table>
     </div>
     <div id="Ejournals" class="subtabcontent">
         <h3>Journals Errors</h3>
@@ -169,6 +202,22 @@
     <div id="Evat" class="subtabcontent">
         <h3>Header VAT Errors</h3>
         <p>Report Header VAT Errors</p>
+        <table>
+            <thead>
+                <th>Report Line</th><th>Transaction Id</th><th>Error</th>
+            </thead>
+        <% var len = JSON.stringify(vatError.length)%>
+        <% for (var i=0;i<=len-1;i++) {%>   
+            <tr> 
+                <% var field_value = JSON.stringify(vatError[i][0])%>
+                <% var field_value_1 = JSON.stringify(vatError[i][1])%> 
+                <% var field_value_2 = JSON.stringify(vatError[i][2])%>
+                <td><%= field_value_1 %></td> 
+                <td><%= field_value %></td>
+                <td><%= field_value_2 %></td>
+            </tr>
+        <% } %>
+        </table>
     </div>
     <div id="Enegheader" class="subtabcontent">
         <h3>Negative Header</h3>
@@ -268,10 +317,24 @@
         }
         var selection = document.getElementById('tran_ids');
         var bkmv_parsed = '<%- JSON.stringify(parsed_sections)%>';
-        var c100 = JSON.parse(bkmv_parsed);
+        var tran_dict = '<%- JSON.stringify(tran_dict)%>';
+        var c100 = JSON.parse(tran_dict);
         selection.addEventListener('change',()=>{
-            console.log(c100['c100']);
+            console.log(selection.value);
+            console.log(c100['c100'][selection.value]);
         });
+
+        var leftButton = document.getElementById('left_button');
+        leftButton.addEventListener('click',()=>{
+            //selection.value = bkmv_parsed['c100'][10]['id'];
+            console.log('left clicked')
+        })
+
+        var rightButton = document.getElementById('right_button');
+        rightButton.addEventListener('click',()=>{
+            //selection.value = bkmv_parsed['c100'][10]['id'];
+            console.log('right clicked')
+        })
     </script>
 </body>
 </html>

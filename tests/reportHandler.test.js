@@ -21,3 +21,9 @@ var invalid_amount_line = {rate: 1000, quantity: 100000, amount: 15000};
 test("Check that line with amount descripancy returns a message", ()=>{
     expect(reportHandler.validateLineDicrepancy(invalid_amount_line)).toBe("Error:: 10 * 10 does not equal to 150");
 });
+
+var valid_amount_line = {rate: 1000, quantity: 100000, amount: 10000};
+
+test("Check that line with no amount descripancy returns false", ()=>{
+    expect(reportHandler.validateLineDicrepancy(valid_amount_line)).toBe(false);
+});

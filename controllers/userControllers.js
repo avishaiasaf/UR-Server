@@ -23,14 +23,18 @@ exports.explore_data = (req, res, next)=>{
     var headerNegError = reportHandler.headerNegError;
     var LineError = reportHandler.LineError;
     var JournalError = reportHandler.JournalError;
+    var vatError = reportHandler.vatError;
     var fields = accessories.fields;
+    var summaryError = reportHandler.summaryError;
     var ini = reportHandler.ini_parsed;
+    var tran_dict = reportHandler.tran_dict;
     setTimeout(()=>{
       //res.send(record); //Buffer.from(iniFile[0].buffer).toString("utf-8");
       res.render('explore', {title: 'Explore', caption: 'Explore Company Report', 
               options: record, c100: summary_c100, d110: summary_d110, d120: summary_d120,
               parsed_sections: parsed_sections, fields: fields, headerError: headerError,
-              headerNegError: headerNegError, LineError: LineError, JournalError: JournalError, ini: ini});
+              headerNegError: headerNegError, LineError: LineError, JournalError: JournalError, 
+              vatError: vatError, summaryError: summaryError, tran_dict: tran_dict, ini: ini});
       //console.log(fields);
     }, 1500);
     

@@ -24,6 +24,7 @@ var reportHandler = {
         headerNegError: null,
         LineError: null,
         JournalError: null,
+        vatError: null,
     },
     handlers:{
         //records: {a000:[],a100:0 ,b100:0,b110:0,c100:0,d110:0,d120:0,m100:0,},
@@ -156,6 +157,8 @@ var reportHandler = {
         var headerNegError = new Array();
         var LineError = new Array();
         var JournalError = new Array();
+        var summaryError = new Array();
+        var vatError = new Array();
         var c100Len = this.bkmvdata_parsed['c100'].length;
         var d110Len = this.bkmvdata_parsed['d110'].length;
         var d120Len = this.bkmvdata_parsed['d120'].length;
@@ -164,14 +167,25 @@ var reportHandler = {
 
         for(let i=0;i<len;i++){
             if(i<c100Len){
+
                 //Validate C100 headers has D110 or D120 lines
-                let currentId = this.bkmvdata_parsed['c100'][i]['id'];
-                let currentRow = this.bkmvdata_parsed['d110'][i]['fileno'];
+                let current = this.bkmvdata_parsed['c100'][i];
                 if(this.validateHeader('c100', i))    
-                    headerError.push([currentId, currentRow, 'Error:: Missing Lines']);   
+                    headerError.push([current['id'], current['fileno'], 'Error:: Missing Lines']); 
+
                 //Validate C100 header amount is not negative
-                if(this.validateNegativeHeaders(i))   
-                    headerNegError.push([currentId, currentRow, 'Error:: Negative Amount for Header'])      
+                if(this.validateNegativeHeaders(current))   
+                    headerNegError.push([current['id'], current['fileno'], 'Error:: Negative Amount for Header'])  
+                
+                //Validate the summary of lines equals to header amount
+                let lineSum = this.validateSummary(current);
+                if(lineSum)
+                    summaryError.push([current['id'], current['fileno'], lineSum]);
+                
+                //Validate amount + VAT equals to gross amount
+                let lineVAT = this.validateVAT(current);
+                if(lineVAT)
+                vatError.push([current['id'], current['fileno'], lineVAT])
             }
             if(i<d110Len){
             //Validate D110 lines has C100 headers
@@ -184,11 +198,9 @@ var reportHandler = {
             }
             if(i<d120Len){
                 //Validate D120 lines has C100 headers
-                let currentId = this.bkmvdata_parsed['d120'][i]['id'];
-                let currentRow = this.bkmvdata_parsed['d120'][i]['fileno'];
+                let current = this.bkmvdata_parsed['d120'][i];
                 if(this.validateHeader('d120', i))    
-                    headerError.push([currentId, currentRow, 'Error:: Missing Header']);
-
+                    headerError.push([current['id'], current['fileno'], 'Error:: Missing Header']);
             } 
             if(i<b100Len){
                 let current = this.bkmvdata_parsed['b100'][i];
@@ -202,6 +214,8 @@ var reportHandler = {
         this.headerNegError = headerNegError;
         this.LineError = LineError;
         this.JournalError = JournalError;
+        this.summaryError = summaryError;
+        this.vatError = vatError;
         //console.log(this.headerError)
         //console.log('search', this.tran_dict['c100']['23029'])
     },
@@ -217,27 +231,18 @@ var reportHandler = {
         }
         return false;              
     },
-    validateSummary(){
+    validateSummary(header){
         //Validate that each C100 header's amount equals to it's D110 or D120 lines
 
-        var summary = new Set();
-        
-        for(let i=0;i<this.bkmvdata_parsed['c100'].length;i++){
-            let header = this.bkmvdata_parsed['c100'][i];
-            let headerAmount = header['totalafterdiscount'];
-            let hasLines = typeof(this.tran_dict['d110'][header['id']])!='undefined' //? this.tran_dict['d110'][this.bkmvdata_parsed['c100'][i]['id']].reduce(amountReducer) : 0;
-            let lineLen = hasLines ? this.tran_dict['d110'][header['id']].length : 0;
-            let lines = hasLines ? (lineLen>0 ? this.tran_dict['d110'][header['id']].reduce(amountReducer) : this.tran_dict['d110'][header['id']]['amount']) : 0;
-            //console.log(headerAmount, hasLines, lines);
-        }
-
-        function amountReducer(a, b){
-            if(typeof(a) === 'object')    return parseInt(a['amount'] + b['amount']);
-            else      return parseInt(a + b['amount']);
-        }
-        
-        this.summaryError = summary;
-        //console.log(this.summaryError)
+        let lineSum = 0;
+        let lines = this.tran_dict['d110'][header['id']];
+        if(lines){
+            for(let j=0;j<lines.length;j++){
+                lineSum += lines[j]['amount'];
+            }
+        } 
+        if(header['totalafterdiscount']!=lineSum && lineSum>0) return `Error:: Lines sum: ${lineSum} does not equal to header sum ${header['totalafterdiscount']}`;
+        return false;
     },
     validateJournals(line){
         //return parseInt(this.bkmvdata_parsed['b100'][i]['trannumber'])==0;
@@ -250,11 +255,15 @@ var reportHandler = {
         if(rate * quantity != amount)  return `Error:: ${rate} * ${quantity} does not equal to ${amount}`;
         return false;
     },
-    validateVAT(){
-
+    validateVAT(header){
+        let vat = header['vattotal'];
+        let total = header['totalafterdiscount'];
+        let grossAmt = header['grossamt'];
+        if(Math.abs(total + vat - grossAmt)>1)  return `Error:: ${total} + ${vat} does not equal to ${grossAmt}`;
+        return false;
     },
-    validateNegativeHeaders(i){
-        if(parseInt(this.bkmvdata_parsed['c100'][i]['totalafterdiscount'])<0)  return true;
+    validateNegativeHeaders(line){
+        if(parseInt(line['totalafterdiscount'])<0)  return true;
         return false;
     }
 };
