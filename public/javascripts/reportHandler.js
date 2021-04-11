@@ -36,11 +36,6 @@ var reportHandler = {
         //Process body file
         this.processBkmvdata(this.bkmvdata);
 
-        //Test data
-        //console.log(this.ini_parsed);
-        //console.log(this.bkmvdata_parsed);
-        //console.log(this.bkmvdata_parsed.lentgh);
-
         //Validate report structure
         this.validateReport();
     },
@@ -245,7 +240,6 @@ var reportHandler = {
         return false;
     },
     validateJournals(line){
-        //return parseInt(this.bkmvdata_parsed['b100'][i]['trannumber'])==0;
         return parseInt(line['trannumber'])==0;
     },
     validateLineDicrepancy(line){
@@ -268,54 +262,8 @@ var reportHandler = {
     }
 };
 
-/*(function testReport(){
-
-    var ini_input='';
-    var bkmvdata_input = '';
-    async function loadData(callback){
-        fs.readFile('public/ini.txt','utf8',(err, data)=>{
-            if(err) throw err;
-            ini_input = data;
-        });
-        fs.readFile('public/BKMVDATA.txt','utf8',(err, data)=>{
-            if(err) throw err;
-            bkmvdata_input = data;
-        });
-        setTimeout(()=>{
-            callback(logData);
-        }, 1000);
-    }
-
-    async function runReport(callback){
-        reportHandler.ini = ini_input;
-        reportHandler.bkmvdata = bkmvdata_input;
-        reportHandler.init();
-        callback();
-    }
-
-    function amountReducer(a, b){
-        if(typeof(a) === 'object')    return parseInt(a['amount'] + b['amount']);
-        else      return parseInt(a + b['amount']);
-    }
-
-    function logData(){
-        //console.log(reportHandler.ini_parsed);
-        //console.log(reportHandler.bkmvdata_parsed['d110']);
-        console.log(reportHandler.tran_dict['d110']['23033'].reduce(amountReducer));(a, b)=>{
-            //console.log(a);
-            if(typeof(a) === 'object')    return parseInt(a['amount'] + b['amount']);
-            else                          return parseInt(a + b['amount']);
-            
-        }));
-        //console.log(reportHandler.tran_dict['d110']['23033']);
-    }
-    loadData(runReport)
-})();*/
-
-//Commented for tests
 module.exports = reportHandler;
-//exports.reportHandler = reportHandler;
-//exports.validateJournals = reportHandler.validateJournals;
+
 
 
 

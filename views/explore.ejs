@@ -49,15 +49,17 @@
             <td>
                 <select id="tran_ids">
                     <% for (var i=0;i<=options.length-1;i++) {%>
-                        <option><%= options[i] %></option>
+                        <option id="<%= i %>"><%= options[i] %></option>
                     <% } %>
-                    <%= options[i] %>
                 </select>
             </td>
             <td><input type="button" value=">" id="right_button" /></td>
         </tr>
     </table>
     <label for="tran_ids">Transaction Ids</label>
+    <div id="transaction">
+        Transaction data
+    </div>
     
 </div>
 <div id="Sections" class="tabcontent">
@@ -315,26 +317,63 @@
             document.getElementById(subtabName).style.display = "block";
             evt.currentTarget.className += " active";
         }
+
         var selection = document.getElementById('tran_ids');
         var bkmv_parsed = '<%- JSON.stringify(parsed_sections)%>';
         var tran_dict = '<%- JSON.stringify(tran_dict)%>';
         var c100 = JSON.parse(tran_dict);
-        selection.addEventListener('change',()=>{
-            console.log(selection.value);
-            console.log(c100['c100'][selection.value]);
-        });
+        selection.addEventListener('change',selectEvent);
+
+        function selectEvent(){
+            let options = selection.options;
+            let value = options[options.selectedIndex].value;
+            let current = c100['c100'][value];
+            let lines = c100['d110'][value];
+            if(current.length>0){
+                document.getElementById('transaction').innerHTML='';
+                buildTran(current[0]);
+                for(i=0;i<lines.length;i++){
+                    buildTran(lines[i]);
+                }                
+            }else{
+                document.getElementById('transaction').innerHTML='';
+            }    
+        }
+
+        function buildTran(tran){
+            console.log('build transaction',Object.keys(tran).length)
+            var tbl = document.createElement('table');  
+            for(const [key, value] of Object.entries(tran)){
+                var tr = document.createElement('tr');
+                var td_1 = document.createElement('td');
+                var cell_1 = document.createTextNode(key);
+                var td_2 = document.createElement('td');
+                var cell_2 = document.createTextNode(value);
+                td_1.appendChild(cell_1);
+                td_2.appendChild(cell_2);
+                tr.appendChild(td_1);
+                tr.appendChild(td_2);
+                tbl.appendChild(tr);
+            }
+            tbl.setAttribute("style", "width: auto;");
+            document.getElementById('transaction').appendChild(tbl);
+        }
 
         var leftButton = document.getElementById('left_button');
-        leftButton.addEventListener('click',()=>{
-            //selection.value = bkmv_parsed['c100'][10]['id'];
-            console.log('left clicked')
-        })
+        leftButton.addEventListener('click',()=>{arrowEvent(-1)})
 
         var rightButton = document.getElementById('right_button');
-        rightButton.addEventListener('click',()=>{
-            //selection.value = bkmv_parsed['c100'][10]['id'];
-            console.log('right clicked')
-        })
+        rightButton.addEventListener('click',()=>{arrowEvent(1)})
+
+        function arrowEvent(next){
+            let options = selection.options;
+            let id = options[options.selectedIndex].id;
+            let nextOpt = parseInt(id) + next;
+            if(nextOpt>=0 && nextOpt<options.length){
+                selection.selectedIndex = nextOpt;
+                selectEvent();
+            }        
+        }
     </script>
 </body>
 </html>
